@@ -1,24 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useEffect } from "react";
+import { Routes, Route } from "react-router-dom";
+import Home from "./pages/home";
+import Details from "./pages/details";
+import "./App.css";
+import { PokemonType } from "./types/types";
+import { setPokemons } from "./redux/pokemonsSlice";
+import { useAppDispatch } from "./hooks";
 
 function App() {
+  const dispatch = useAppDispatch();
+
+  const fetchPokemons = async () => {
+    try {
+      let promises = [];
+      for (let i = 1; i <= 15; i++) {
+        const url = `https://pokeapi.co/api/v2/pokemon/${i}`;
+        promises.push(fetch(url).then((res) => res.json()));
+      }
+      Promise.all(promises).then((results: PokemonType[]) => {
+        const pokemon = results.map((result) => ({
+          name: result.name,
+          image: result.sprites["front_default"],
+          type: result.types.map((type) => type.type.name).join(", "),
+          stats: result.stats.map((stat) => ({
+            statName: stat.stat.name,
+            stat: stat.base_stat,
+          })),
+          id: result.id,
+        }));
+        dispatch(setPokemons(pokemon));
+      });
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    fetchPokemons();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/details/:id" element={<Details />} />
+      </Routes>
     </div>
   );
 }

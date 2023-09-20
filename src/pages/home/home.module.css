@@ -1,0 +1,9 @@
+.home {
+  margin: 0 30px;
+}
+
+.cards_display {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
