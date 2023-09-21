@@ -1,20 +1,25 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../hooks";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setCurrentPokemon,
   setSearchPokemons,
 } from "../../redux/pokemonsSlice";
 import { Pokemon } from "../../types/types";
 import PokemonCard from "../../components/pokemonCard";
-import styles from "./home.module.css";
+import "./home.css";
 import SearchNav from "../../components/searchNav";
+import { RootState } from "../../redux/store";
 
 const Home = () => {
-  const dispatch = useAppDispatch();
-  const pokemons = useAppSelector((state) => state.pokemon.pokemons);
-  const searchPokemons = useAppSelector(
-    (state) => state.pokemon.searchPokemons
+  const loadingGif = require("../../icons/loading.gif");
+  const dispatch = useDispatch();
+  const pokemons = useSelector((state: RootState) => state.pokemon.pokemons);
+  const noPokemonsFound = useSelector(
+    (state: RootState) => state.pokemon.noPokemonsFound
+  );
+  const searchPokemons = useSelector(
+    (state: RootState) => state.pokemon.searchPokemons
   );
   const [displayPokemons, setDisplayPokemons] = useState<Pokemon[]>();
 
@@ -25,29 +30,49 @@ const Home = () => {
   useEffect(() => {
     if (searchPokemons && searchPokemons.length > 0) {
       setDisplayPokemons(searchPokemons);
+    } else if (noPokemonsFound) {
+      setDisplayPokemons([]);
     } else {
       setDisplayPokemons(pokemons);
     }
-  }, [searchPokemons]);
+  }, [searchPokemons, noPokemonsFound]);
 
   return (
-    <div className={styles.home}>
+    <div className="home">
+      <h1 className="main-title">Welcome to Pokedex</h1>
       <SearchNav />
-      <ul className={styles.cards_display}>
-        {displayPokemons?.map((pokemon) => (
-          <li
-            key={pokemon.id}
-            onClick={() => {
-              dispatch(setSearchPokemons([]));
-              dispatch(setCurrentPokemon(pokemon));
-            }}
-          >
-            <Link to={`details/${pokemon.id}`}>
-              <PokemonCard pokemon={pokemon} />
-            </Link>
-          </li>
-        ))}
-      </ul>
+
+      {displayPokemons?.length ? (
+        <ul className="cards_display" data-testid="pokemon-cards">
+          {displayPokemons.map((pokemon) => (
+            <li
+              key={pokemon.id}
+              onClick={() => {
+                dispatch(setSearchPokemons([]));
+                dispatch(setCurrentPokemon(pokemon));
+              }}
+            >
+              <Link to={`details/${pokemon.id}`}>
+                <PokemonCard pokemon={pokemon} />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : noPokemonsFound ? (
+        <>
+          <h1>No pokemons with that name</h1>
+        </>
+      ) : (
+        <>
+          <img
+            src={loadingGif}
+            alt=""
+            width={200}
+            height={200}
+            style={{ margin: "0 auto" }}
+          />
+        </>
+      )}
     </div>
   );
 };

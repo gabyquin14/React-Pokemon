@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Pokemon } from "../../types/types";
-import styles from "./pokemonCard.module.css";
+import "./pokemonCard.css";
 
 interface Props {
   pokemon: Pokemon;
@@ -8,8 +8,8 @@ interface Props {
 
 const PokemonCard: FC<Props> = ({ pokemon }) => {
   return (
-    <div className={styles.card}>
-      <img src={pokemon.image} alt="pokemon-front-sprite" />
+    <div className="card">
+      <img src={pokemon.image} alt={`${pokemon.name}-front-sprite`} />
       <h1>{pokemon.name}</h1>
     </div>
   );

@@ -1,7 +1,7 @@
 export interface Pokemon {
   name: string;
   image: string;
-  type: string;
+  type: string[];
   stats: {
     statName: string;
     stat: number;

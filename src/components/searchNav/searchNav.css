@@ -1,0 +1,8 @@
+.search_input {
+  outline: none;
+  border-radius: 10px;
+  padding: 8px;
+  background-color: #c4dcc3;
+  border: 1px solid #2f432d;
+  width: 200px;
+}

@@ -1,10 +1,17 @@
 .App {
   text-align: center;
+  padding: 1rem;
 }
 
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+}
+
+@media screen and (min-width: 600px) {
+  .details {
+    padding: 4rem;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -32,6 +39,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
